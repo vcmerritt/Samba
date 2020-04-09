@@ -17,6 +17,7 @@ apt install samba smbclient krb5-user winbind bind9 dnsutils -y
 - Enter the DC Name for the first DC Installed (ie.  sambadc01.mydomain.com) as the administrative server
 ```
 <br>
+
 ### Clean up the /etc/krb5.conf
 Copy this text to a notepad document and change the occurrences of MYDOMAIN.COM or mydomain.com to the correct domain name you are creating for your environment. <br>
 ``` bash
