@@ -1,4 +1,5 @@
-# Configure Samba Active Directory DC IP Address and Reboot System
+# Configure the first Samba Active Directory (AD) DC 
+
 ### Change the Network to use a static IP Address (DC01)
 ``` bash
 #Make sure you change the IP, mask and gateway to the correct IP before executing this command
