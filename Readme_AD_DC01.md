@@ -47,12 +47,18 @@ cat <<EOF > /etc/krb5.conf
 EOF
 ```
 
-#Remove the Default SAMBA Config to prepare for setup
+### Remove the Default SAMBA Config to prepare for setup
+``` bash
 (cd /etc/samba && mv smb.conf smb.conf.orig)
+```
 
-#Generate AD Domain with BIND9_DLZ backend
+### Generate Active Directory (AD) Domain with BIND9_DLZ backend
+``` bash
 samba-tool domain provision --host-name=SambaDC01 --realm=MYDOMAIN.COM --domain=MYDOMAIN --server-role='dc' --adminpass=GoodP@ssw0rd --dns-backend=BIND9_DLZ --function-level=2008_R2 --use-rfc2307
+```
 
+### Modify named.conf for Bind to use the correct dns.keytab for the domain
+``` bash 
 #Add the tkey and minimal responses statements to the /etc/bind/named.conf.options file 
 sed -i 's/directory \"\/var\/cache\/bind\";/directory \"\/var\/cache\/bind\";\n        tkey-gssapi-keytab \"\/var\/lib\/samba\/private\/dns\.keytab\";\n        minimal\-responses yes;/g' /etc/bind/named.conf.options
 
@@ -62,32 +68,41 @@ Modify Named.conf.options file and add the following lines under "directory "/va
 
      tkey-gssapi-keytab "/var/lib/samba/private/dns.keytab";
      minimal-responses yes;
+```
 
-
-#Change file permissions
+### Change file permissions and ownership for the dns.keytab
+``` bash
 chmod 640 /var/lib/samba/private/dns.keytab
 chown root:bind /var/lib/samba/private/dns.keytab
+```
 
-#Open the following file with your favorite editor, and uncomment the bind9-dlz module of your choice by removing the # before the version that is the closest match in /var/lib/samba/bind-dns/named.conf:
+### Enable the Bind-DLZ Modules and modify the /etc/bind/named.conf file
 
+``` bash 
+#Enable Bind-DLZ Module
 sed -i 's/# database.*11.*;/database \"dlopen \/usr\/lib\/x86_64-linux-gnu\/samba\/bind9\/dlz_bind9_11.so\";/g' /var/lib/samba/bind-dns/named.conf
 
-
-#Open the /etc/bind/named.conf file, and add the following include statement to the end of named.conf:
+#Include the Bind-DLZ module in the main named.conf config file
 echo 'include "/var/lib/samba/bind-dns/named.conf";' >> /etc/bind/named.conf
 
 #Disable DNSSec Validation
 sed -i 's/dnssec\-validation auto;/\/\/dnssec\-validation auto;/g' /etc/bind/named.conf.options
 
-#Restart some services
+#Restart the Bind9 Service
 systemctl restart bind9
+```
 
+### Enable the SAMBA-AD-DC Service
+``` bash
 systemctl stop smbd nmbd winbind
 systemctl disable smbd nmbd winbind
 systemctl mask smbd nmbd winbind
 systemctl unmask samba-ad-dc
 systemctl enable samba-ad-dc
+```
 
+### Change DNS Resolution to point to DC01 for DNS
+``` bash
 #Modify resolv.conf to point to local system:
 Change /etc/resolv.conf
 
@@ -97,12 +112,14 @@ echo nameserver 192.168.2.40 >> /etc/resolv.conf
 
 #Restart the the Samba AD Service
 systemctl restart samba-ad-dc
+```
 
+### Add a DNS Reverse Lookup Zone and Test DNS
+``` bash
 #Create a reverse DNS Zone
 kinit administrator
 samba-tool dns zonecreate SambaDC01 2.168.192.in-addr.arpa
 samba-tool dns add SambaDC01 2.168.192.in-addr.arpa 40.2.168.192.in-addr.arpa PTR sambadc01.mydomain.com
-
 
 #Test DNS Resolution
 host -t A SambaDC01.mydomain.com
@@ -111,16 +128,17 @@ host -t SRV _kerberos._tcp.mydomain.com
 host -t SRV _kerberos._udp.mydomain.com
 host -t PTR 192.168.2.40
 
+```
 
+##  Configure PAM Login for Linux 
+This next step will reconfigure the login process on the newly installed DC so that ssh and other sessions to the server are authenticated against the Active Directory.   
 
-
-
-#--- Configure PAM Login for Linux ---#
+``` bash
 apt-get install oddjob-mkhomedir realmd sssd-tools sssd libnss-sss libpam-sss adcli sssd-krb5 krb5-config krb5-user libpam-krb5 sudo -y
 
 echo "session optional      pam_oddjob_mkhomedir.so skel=/etc/skel" >> /etc/pam.d/common-session
 
-#Create the /etc/sssd/sssd.conf > file
+#Create the /etc/sssd/sssd.conf file to enable authentication to the newly installed AD
 cat <<EOF > /etc/sssd/sssd.conf 
 [sssd]
 domains = MYDOMAIN.COM
@@ -161,12 +179,16 @@ kinit administrator
 net ads keytab create
 klist -k -K -t /etc/krb5.keytab
 
-
 #Restart SSSD to make sure the krb5 service takes the new settings.
 /usr/bin/systemctl restart sssd
+```
+### Add linux groups to /etc/sudoers to enable access to the DC for Management Purposes
+Now that the DC is installed and authentication is configured to use the Active Directory, we will add the following groups to the sudoers file so that any members of these Active Directory Groups will be able to manage the newly installed Samba DC. 
 
+``` bash
 #Add Active Directory Group to sudoers file
 echo '%linuxsudoers           ALL=(ALL)       ALL' >> /etc/sudoers
 
 #The goal is to use the group above, but you can also add the Administrators group to allow any user on the Domain Controller that is in that group to use sudo.
 echo '%Administrators	         ALL=(ALL)	      ALL' >> /etc/sudoers
+```
