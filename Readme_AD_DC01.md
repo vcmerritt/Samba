@@ -8,15 +8,18 @@ sed -i 's/dhcp/static\n   address 192\.168\.2\.40\n   netmask 255\.255\.255\.0\n
 /usr/sbin/reboot
 ```
 
-# Name the domain and answer prompts
+### Install Samba Services and enter initial values
+``` bash
 apt install samba smbclient krb5-user winbind bind9 dnsutils -y   
 - Accept the default of NO for getting data from DHCP. 
 - Enter the DOMAIN NAME in all Caps when prompted (ie. MYDOMAIN.COM)
 - Enter the DC Name for the system you are installing (ie.  sambadc01.mydomain.com)
 - Enter the DC Name for the first DC Installed (ie.  sambadc01.mydomain.com) as the administrative server
-
-
-#Clean up the /etc/krb5.conf
+```
+<br>
+### Clean up the /etc/krb5.conf
+Copy this text to a notepad document and change the occurrences of MYDOMAIN.COM or mydomain.com to the correct domain name you are creating for your environment. <br>
+``` bash
 cat <<EOF > /etc/krb5.conf
 [libdefaults]
         default_realm = MYDOMAIN.COM
@@ -41,7 +44,7 @@ cat <<EOF > /etc/krb5.conf
 [domain_realm]
         .mydomain.com = MYDOMAIN.COM
 EOF
-
+```
 
 #Remove the Default SAMBA Config to prepare for setup
 (cd /etc/samba && mv smb.conf smb.conf.orig)
