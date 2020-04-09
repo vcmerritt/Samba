@@ -129,8 +129,10 @@ host -t PTR 192.168.2.41
 This next step will reconfigure the login process on the newly installed DC so that ssh and other sessions to the server are authenticated against the Active Directory.   
 
 ``` bash
+#Install the supporting software required
 apt-get install oddjob-mkhomedir realmd sssd-tools sssd libnss-sss libpam-sss adcli sssd-krb5 krb5-config krb5-user libpam-krb5 sudo -y
 
+#Modify PAM settings to enable auto-creation of home directorys for Active Directory users
 echo "session optional      pam_oddjob_mkhomedir.so skel=/etc/skel" >> /etc/pam.d/common-session
 
 #Create the /etc/sssd/sssd.conf file to enable authentication to the newly installed AD
