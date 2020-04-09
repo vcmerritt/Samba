@@ -1,8 +1,12 @@
-#Change the Network to use a static IP Address (DC01)
+# Configure Samba Active Directory DC IP Address and Reboot System
+### Change the Network to use a static IP Address (DC01)
+``` bash
+#Make sure you change the IP, mask and gateway to the correct IP before executing this command
 sed -i 's/dhcp/static\n   address 192\.168\.2\.40\n   netmask 255\.255\.255\.0\n   gateway 192\.168\.2\.1\n   dns-nameservers 192\.168\.2\.40\n   dns-domain mydomain\.com\n   dns-search mydomain\.com/g' /etc/network/interfaces
 
-#Reboot Server 
+#Reboot Server to make the change take effect
 /usr/sbin/reboot
+```
 
 # Name the domain and answer prompts
 apt install samba smbclient krb5-user winbind bind9 dnsutils -y   
