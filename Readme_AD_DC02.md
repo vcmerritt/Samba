@@ -49,7 +49,7 @@ cat <<EOF > /etc/krb5.conf
 [realms]
         MYDOMAIN.COM = {
                 kdc = SambaDC01.mydomain.com
-                kdc = sambadc02.mydomain.com
+                kdc = SambaDC02.mydomain.com
                 admin_server = SambaDC01.mydomain.com
                 default_domain = mydomain.com
         }
