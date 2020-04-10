@@ -1,5 +1,10 @@
 # Configure the first Samba Active Directory (AD) DC 
 
+### Change the hostname of the VM before installing Samba
+``` bash
+sed -i 's/BaseVMBuild/SambaDC01/g' /etc/hosts
+sed -i 's/BaseVMBuild/SambaDC01/g' /etc/hostname
+```
 ### Change the Network to use a static IP Address (DC01)
 ``` bash
 #Make sure you change the IP, mask and gateway to the correct IP before executing this command
