@@ -9,7 +9,7 @@ sed -i 's/BaseVMBuild/SambaDC02/g' /etc/hostname
 ### Change the Network to use a static IP Address (DC01)
 ``` bash
 #Make sure you change the IP, mask and gateway to the correct IP before executing this command
-sed -i 's/dhcp/static\n   address 192\.168\.2\.41\n   netmask 255\.255\.255\.0\n   gateway 192\.168\.2\.1\n   dns-nameservers 192\.168\.2\.41\n   dns-domain mydomain\.com\n   dns-search mydomain\.com/g' /etc/network/interfaces
+sed -i 's/dhcp/static\n   address 192\.168\.2\.41\n   netmask 255\.255\.255\.0\n   gateway 192\.168\.2\.1\n   dns-nameservers 192\.168\.2\.40\n   dns-domain mydomain\.com\n   dns-search mydomain\.com/g' /etc/network/interfaces
 
 # Change DNS Resolution to point to DC01 for DNS
 ``` bash
@@ -196,7 +196,7 @@ Now that the DC is installed and authentication is configured to use the Active 
 echo '%linuxsudoers           ALL=(ALL)       ALL' >> /etc/sudoers
 
 #The goal is to use the group above, but you can also add the Administrators group to allow any user on the Domain Controller that is in that group to use sudo.
-echo '%Administrators	         ALL=(ALL)	      ALL' >> /etc/sudoers
+echo '%Administrators	         ALL=(ALL)	       ALL' >> /etc/sudoers
 
 #Restart the SSH Service to be sure it will use the Kerberos Login Correctly
 systemctl restart ssh
