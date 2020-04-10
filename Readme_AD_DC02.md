@@ -100,6 +100,9 @@ echo 'include "/var/lib/samba/bind-dns/named.conf";' >> /etc/bind/named.conf
 #Disable DNSSec Validation
 sed -i 's/dnssec\-validation auto;/\/\/dnssec\-validation auto;/g' /etc/bind/named.conf.options
 
+#Set permissions on the /var/lib/samba/bind-dns folder to allow the service to access it
+chmod 755 /var/lib/samba/bind-dns
+
 #Restart the Bind9 Service
 systemctl restart bind9
 ```
