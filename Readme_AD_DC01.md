@@ -198,7 +198,7 @@ Now that the DC is installed and authentication is configured to use the Active 
 echo '%linuxsudoers           ALL=(ALL)       ALL' >> /etc/sudoers
 
 #The goal is to use the group above, but you can also add the Administrators group to allow any user on the Domain Controller that is in that group to use sudo.
-echo '%Administrators	         ALL=(ALL)	       ALL' >> /etc/sudoers
+echo '%domain\ admins	         ALL=(ALL)	       ALL' >> /etc/sudoers
 
 #Restart the SSH Service to be sure it will use the Kerberos Login Correctly
 systemctl restart ssh
