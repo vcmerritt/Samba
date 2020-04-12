@@ -2,8 +2,8 @@
 
 ### Change the hostname of the VM before installing Samba
 ``` bash
-sed -i 's/BaseVMBuild/SambaDC01/g' /etc/hosts
-sed -i 's/BaseVMBuild/SambaDC01/g' /etc/hostname
+sed -i 's/BaseVMBuild/SAMBADC01/g' /etc/hosts
+sed -i 's/BaseVMBuild/SAMBADC01/g' /etc/hostname
 ```
 ### Change the Network to use a static IP Address (DC01)
 ``` bash
@@ -60,7 +60,7 @@ EOF
 
 ### Generate Active Directory (AD) Domain with BIND9_DLZ backend
 ``` bash
-samba-tool domain provision --host-name=SAMBADC01 --realm=MYDOMAIN.COM --domain=MYDOMAIN --server-role='dc' --adminpass=GoodP@ssw0rd --dns-backend=BIND9_DLZ --function-level=2008_R2 --use-rfc2307
+samba-tool domain provision --host-name=SAMBADC01 --realm=MYDOMAIN.COM --domain=MYDOMAIN --server-role='dc' --adminpass=ANewP@ssw0rd --dns-backend=BIND9_DLZ --function-level=2008_R2 --use-rfc2307
 ```
 
 ### Modify named.conf for Bind to use the correct dns.keytab for the domain
@@ -109,9 +109,7 @@ systemctl enable samba-ad-dc
 
 ### Change DNS Resolution to point to DC01 for DNS
 ``` bash
-#Modify resolv.conf to point to local system:
-#Change /etc/resolv.conf
-
+#Modify resolv.conf to point to local system and the proper DNS Domain name
 echo domain mydomain.com > /etc/resolv.conf
 echo search mydomain.com >> /etc/resolv.conf
 echo nameserver 192.168.2.40 >> /etc/resolv.conf
@@ -122,13 +120,13 @@ systemctl restart samba-ad-dc
 
 ### Add a DNS Reverse Lookup Zone and Test DNS
 ``` bash
-#Create a reverse DNS Zone
+#Create a reverse DNS Zone and entry for DC
 kinit administrator
 samba-tool dns zonecreate SambaDC01 2.168.192.in-addr.arpa
-samba-tool dns add SambaDC01 2.168.192.in-addr.arpa 40.2.168.192.in-addr.arpa PTR sambadc01.mydomain.com
+samba-tool dns add SAMBADC01 2.168.192.in-addr.arpa 40.2.168.192.in-addr.arpa PTR SAMBADC01.mydomain.com
 
 #Test DNS Resolution
-host -t A SambaDC01.mydomain.com
+host -t A SAMBADC01.mydomain.com
 host -t SRV _ldap._tcp.mydomain.com
 host -t SRV _kerberos._tcp.mydomain.com
 host -t SRV _kerberos._udp.mydomain.com
