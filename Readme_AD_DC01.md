@@ -42,9 +42,9 @@ cat <<EOF > /etc/krb5.conf
 
 [realms]
         MYDOMAIN.COM = {
-                kdc = SambaDC01.mydomain.com
-                kdc = sambadc02.mydomain.com
-                admin_server = SambaDC01.mydomain.com
+                kdc = SAMBADC01.mydomain.com
+                kdc = SAMBADC02.mydomain.com
+                admin_server = SAMBADC01.mydomain.com
                 default_domain = mydomain.com
         }
 
@@ -60,7 +60,7 @@ EOF
 
 ### Generate Active Directory (AD) Domain with BIND9_DLZ backend
 ``` bash
-samba-tool domain provision --host-name=SambaDC01 --realm=MYDOMAIN.COM --domain=MYDOMAIN --server-role='dc' --adminpass=GoodP@ssw0rd --dns-backend=BIND9_DLZ --function-level=2008_R2 --use-rfc2307
+samba-tool domain provision --host-name=SAMBADC01 --realm=MYDOMAIN.COM --domain=MYDOMAIN --server-role='dc' --adminpass=GoodP@ssw0rd --dns-backend=BIND9_DLZ --function-level=2008_R2 --use-rfc2307
 ```
 
 ### Modify named.conf for Bind to use the correct dns.keytab for the domain
@@ -110,7 +110,7 @@ systemctl enable samba-ad-dc
 ### Change DNS Resolution to point to DC01 for DNS
 ``` bash
 #Modify resolv.conf to point to local system:
-Change /etc/resolv.conf
+#Change /etc/resolv.conf
 
 echo domain mydomain.com > /etc/resolv.conf
 echo search mydomain.com >> /etc/resolv.conf
@@ -147,6 +147,8 @@ apt-get install oddjob-mkhomedir realmd sssd-tools sssd libnss-sss libpam-sss ad
 echo "session optional      pam_oddjob_mkhomedir.so skel=/etc/skel" >> /etc/pam.d/common-session
 
 #Create the /etc/sssd/sssd.conf file to enable authentication to the newly installed AD
+#Make sure to modify all instances of mydomain or MYDOMAIN to your domain name for the domain being created.
+#The entries in this file are cases sensitive so replace the mydomain/MYDOMAIN with all caps or small case respectively.
 cat <<EOF > /etc/sssd/sssd.conf 
 [sssd]
 domains = MYDOMAIN.COM
@@ -182,6 +184,7 @@ chown root:root /etc/sssd/sssd.conf
 chmod 600 /etc/sssd/sssd.conf
 
 #Create /etc/krb5.keytab
+#Change the occurrences of MYDOMAIN to match the domain you are creating for your company (match the case)
 sed -i 's/workgroup \= MYDOMAIN/workgroup \= MYDOMAIN\n        kerberos method = secrets and keytab/g' /etc/samba/smb.conf
 kinit administrator
 net ads keytab create
