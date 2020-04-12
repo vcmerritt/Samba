@@ -238,3 +238,8 @@ iptables -A INPUT -p tcp --dport 49152:65535 -j ACCEPT
 iptables -A INPUT -p tcp -j DROP
 iptables-save > /etc/iptables/rules.v4
 ```
+
+## Reboot the newly installed DC
+``` bash 
+/usr/sbin/reboot
+```
