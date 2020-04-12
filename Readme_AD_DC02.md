@@ -235,3 +235,12 @@ iptables -A INPUT -p tcp --dport 49152:65535 -j ACCEPT
 iptables -A INPUT -p tcp -j DROP
 iptables-save > /etc/iptables/rules.v4
 ```
+
+## Reboot DC and Test 
+``` bash 
+/usr/sbin/reboot
+
+#Once the Reboot is complete, use a Windows 10 Pro Test Workstation with the RSAT tools installed
+#to check DNS, and Active Directory Users and Computers and validate the installation.
+```
+
