@@ -4,6 +4,12 @@
 ``` bash
 sed -i 's/BaseVMBuild/SAMBADC01/g' /etc/hosts
 sed -i 's/BaseVMBuild/SAMBADC01/g' /etc/hostname
+
+# If you are using a domain other than MYDOMAIN.COM execute the following (replace newdomain with your domain name):
+sed -i 's/mydomain\.com/newdomain\.com/g' /etc/hosts
+
+Hint:  If you run the sed command without the -i it will test the change and show you the results.
+
 ```
 ### Change the Network to use a static IP Address (DC01)
 ``` bash
