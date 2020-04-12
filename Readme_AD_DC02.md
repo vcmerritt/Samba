@@ -53,9 +53,9 @@ cat <<EOF > /etc/krb5.conf
 
 [realms]
         MYDOMAIN.COM = {
-                kdc = SambaDC01.mydomain.com
-                kdc = SambaDC02.mydomain.com
-                admin_server = SambaDC01.mydomain.com
+                kdc = SAMBADC01.mydomain.com
+                kdc = SAMBADC02.mydomain.com
+                admin_server = SAMBADC01.mydomain.com
                 default_domain = mydomain.com
         }
 
@@ -131,7 +131,7 @@ kinit administrator
 samba-tool dns add SambaDC01 2.168.192.in-addr.arpa 41.2.168.192.in-addr.arpa PTR sambadc02.mydomain.com
 
 #Test DNS Resolution
-host -t A SambaDC01.mydomain.com
+host -t A SAMBADC01.mydomain.com
 host -t SRV _ldap._tcp.mydomain.com
 host -t SRV _kerberos._tcp.mydomain.com
 host -t SRV _kerberos._udp.mydomain.com
