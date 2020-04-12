@@ -201,3 +201,32 @@ echo '%domain\ admins	         ALL=(ALL)	       ALL' >> /etc/sudoers
 #MAKE SURE TO LOG OUT OF ALL Putty Sessions after making the changes to the SUDOERS group and then use putty to log back into the DC and test things out. 
 
 ```
+
+# Configure Firewall
+``` bash
+apt-get install iptables iptables-persistent -y
+iptables -F
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
+iptables -A INPUT -p tcp --dport 88 -j ACCEPT
+iptables -A INPUT -p udp --dport 88 -j ACCEPT
+iptables -A INPUT -p udp --dport 123 -j ACCEPT
+iptables -A INPUT -p tcp --dport 135 -j ACCEPT
+iptables -A INPUT -p udp --dport 137 -j ACCEPT
+iptables -A INPUT -p udp --dport 138 -j ACCEPT
+iptables -A INPUT -p tcp --dport 139 -j ACCEPT
+iptables -A INPUT -p tcp --dport 389 -j ACCEPT
+iptables -A INPUT -p udp --dport 389 -j ACCEPT
+iptables -A INPUT -p tcp --dport 445 -j ACCEPT
+iptables -A INPUT -p tcp --dport 464 -j ACCEPT
+iptables -A INPUT -p udp --dport 464 -j ACCEPT
+iptables -A INPUT -p tcp --dport 636 -j ACCEPT
+iptables -A INPUT -p tcp --dport 3268 -j ACCEPT
+iptables -A INPUT -p tcp --dport 3269 -j ACCEPT
+iptables -A INPUT -p tcp --dport 49152:65535 -j ACCEPT
+iptables -A INPUT -p tcp -j DROP
+iptables-save > /etc/iptables/rules.v4
+```
