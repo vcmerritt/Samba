@@ -10,10 +10,8 @@ sed -i 's/mydomain\.com/newdomain\.com/g' /etc/hosts
 
 Hint:  If you run the sed command without the -i it will test the change and show you the results.
 
-```
-### Change the Network to use a static IP Address (DC01)
-``` bash
-#Make sure you change the IP, mask and gateway to the correct IP before executing this command
+# Change the Network to use a static IP Address (DC01)
+# Make sure you change the IP, mask and gateway to the correct IP before executing this command
 sed -i 's/dhcp/static\n   address 192\.168\.2\.40\n   netmask 255\.255\.255\.0\n   gateway 192\.168\.2\.1\n   dns-nameservers 192\.168\.2\.40\n   dns-domain mydomain\.com\n   dns-search mydomain\.com/g' /etc/network/interfaces
 
 #Reboot Server to make the change take effect
