@@ -164,11 +164,14 @@ EOF
 #Change permissions on sssd.conf
 chown root:root /etc/sssd/sssd.conf
 chmod 600 /etc/sssd/sssd.conf
+
+#Modify /etc/samba/smb.conf
+sed -i 's/workgroup \= MYDOMAIN/workgroup \= MYDOMAIN\n        kerberos method = secrets and keytab/g' /etc/samba/smb.conf
+
 ```
 
-## Modify SMB.Conf and create KRB5.Keytab
+## Create KRB5.Keytab
 ``` bash
-sed -i 's/workgroup \= MYDOMAIN/workgroup \= MYDOMAIN\n        kerberos method = secrets and keytab/g' /etc/samba/smb.conf
 kinit administrator
 net ads keytab create
 klist -k -K -t /etc/krb5.keytab
