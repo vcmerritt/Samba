@@ -178,11 +178,10 @@ klist -k -K -t /etc/krb5.keytab
 
 #Restart SSSD to make sure the krb5 service takes the new settings.
 /usr/bin/systemctl restart sssd
-```
-### Add linux groups to /etc/sudoers to enable access to the DC for Management Purposes
+
+# Add linux groups to /etc/sudoers to enable access to the DC for Management Purposes
 Now that the DC is installed and authentication is configured to use the Active Directory, we will add the following groups to the sudoers file so that any members of these Active Directory Groups will be able to manage the newly installed Samba DC. 
 
-``` bash
 #Add Active Directory Group to sudoers file
 echo '%linuxsudoers           ALL=(ALL)       ALL' >> /etc/sudoers
 
