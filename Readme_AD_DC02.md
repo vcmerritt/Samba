@@ -18,8 +18,10 @@ Change /etc/resolv.conf
 echo domain mydomain.com > /etc/resolv.conf
 echo search mydomain.com >> /etc/resolv.conf
 echo nameserver 192.168.2.40 >> /etc/resolv.conf
+```
 
-#Reboot Server to make the change take effect
+## Reboot Server to make the change take effect
+``` bash 
 /usr/sbin/reboot
 ```
 
