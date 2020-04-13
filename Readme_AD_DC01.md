@@ -213,6 +213,7 @@ echo '%domain\ admins	         ALL=(ALL)	       ALL' >> /etc/sudoers
 ### Configure Firewall
 ``` bash
 apt-get install iptables iptables-persistent -y
+export PATH=$PATH:/usr/sbin
 iptables -F
 iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 iptables -A INPUT -i lo -j ACCEPT
