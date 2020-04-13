@@ -239,7 +239,7 @@ iptables -A INPUT -p tcp -j DROP
 iptables-save > /etc/iptables/rules.v4
 ```
 
-## Reboot the newly installed DC
+## Restart DNS Services
 ``` bash 
-/usr/sbin/reboot
+systemctl restart bind9
 ```
