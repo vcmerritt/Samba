@@ -55,40 +55,27 @@ cat <<EOF > /etc/krb5.conf
 [domain_realm]
         .mydomain.com = MYDOMAIN.COM
 EOF
-```
 
-### Remove the Default SAMBA Config to prepare for setup
-``` bash
+# Remove the Default SAMBA Config to prepare for setup
 (cd /etc/samba && mv smb.conf smb.conf.orig)
 ```
 
-### Generate Active Directory (AD) Domain with BIND9_DLZ backend
+### Create the Active Directory Domain
 ``` bash
 samba-tool domain provision --host-name=SAMBADC01 --realm=MYDOMAIN.COM --domain=MYDOMAIN --server-role='dc' --adminpass=ANewP@ssw0rd --dns-backend=BIND9_DLZ --function-level=2008_R2 --use-rfc2307
 ```
 
-### Modify named.conf for Bind to use the correct dns.keytab for the domain
-``` bash 
+## Modify Default Configuration Files
+``` bash
+# Modify named.conf for Bind to use the correct dns.keytab for the domain
 #Add the tkey and minimal responses statements to the /etc/bind/named.conf.options file 
 sed -i 's/directory \"\/var\/cache\/bind\";/directory \"\/var\/cache\/bind\";\n        tkey-gssapi-keytab \"\/var\/lib\/samba\/private\/dns\.keytab\";\n        minimal\-responses yes;/g' /etc/bind/named.conf.options
 
-or 
-
-Modify Named.conf.options file and add the following lines under "directory "/var/cache/bind";
-
-     tkey-gssapi-keytab "/var/lib/samba/private/dns.keytab";
-     minimal-responses yes;
-```
-
-### Change file permissions and ownership for the dns.keytab
-``` bash
+# Change file permissions and ownership for the dns.keytab
 chmod 640 /var/lib/samba/private/dns.keytab
 chown root:bind /var/lib/samba/private/dns.keytab
-```
 
-### Enable the Bind-DLZ Modules and modify the /etc/bind/named.conf file
-
-``` bash 
+# Enable the Bind-DLZ Modules and modify the /etc/bind/named.conf file
 #Enable Bind-DLZ Module
 sed -i 's/# database.*11.*;/database \"dlopen \/usr\/lib\/x86_64-linux-gnu\/samba\/bind9\/dlz_bind9_11.so\";/g' /var/lib/samba/bind-dns/named.conf
 
@@ -100,19 +87,16 @@ sed -i 's/dnssec\-validation auto;/\/\/dnssec\-validation auto;/g' /etc/bind/nam
 
 #Restart the Bind9 Service
 systemctl restart bind9
-```
 
-### Enable the SAMBA-AD-DC Service
-``` bash
+# Enable the SAMBA-AD-DC Service
 systemctl stop smbd nmbd winbind
 systemctl disable smbd nmbd winbind
 systemctl mask smbd nmbd winbind
 systemctl unmask samba-ad-dc
 systemctl enable samba-ad-dc
-```
 
-### Change DNS Resolution to point to DC01 for DNS
-``` bash
+
+#Change DNS Resolution to point to DC01 for DNS
 #Modify resolv.conf to point to local system and the proper DNS Domain name
 echo domain mydomain.com > /etc/resolv.conf
 echo search mydomain.com >> /etc/resolv.conf
