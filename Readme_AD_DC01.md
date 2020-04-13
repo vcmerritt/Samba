@@ -240,7 +240,3 @@ iptables -A INPUT -p tcp -j DROP
 iptables-save > /etc/iptables/rules.v4
 ```
 
-## Restart DNS Services
-``` bash 
-systemctl restart bind9
-```
