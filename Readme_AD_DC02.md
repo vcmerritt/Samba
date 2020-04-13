@@ -9,15 +9,13 @@ sed -i 's/BaseVMBuild/SambaDC02/g' /etc/hostname
 sed -i 's/mydomain\.com/newdomain\.com/g' /etc/hosts
 
 Hint:  If you run the sed command without the -i it will test the change and show you the results.
-```
 
 ### Change the Network to use a static IP Address (DC01)
-``` bash
 #Make sure you change the IP, mask and gateway to the correct IP before executing this command
 sed -i 's/dhcp/static\n   address 192\.168\.2\.41\n   netmask 255\.255\.255\.0\n   gateway 192\.168\.2\.1\n   dns-nameservers 192\.168\.2\.40\n   dns-domain mydomain\.com\n   dns-search mydomain\.com/g' /etc/network/interfaces
-```
+
 # Change DNS Resolution to point to DC01 for DNS
-``` bash
+
 #Modify resolv.conf to point to local system:
 Change /etc/resolv.conf
 
@@ -62,10 +60,8 @@ cat <<EOF > /etc/krb5.conf
 [domain_realm]
         .mydomain.com = MYDOMAIN.COM
 EOF
-```
 
-### Remove the Default SAMBA Config to prepare for setup
-``` bash
+# Remove the Default SAMBA Config to prepare for setup
 (cd /etc/samba && mv smb.conf smb.conf.orig)
 ```
 
@@ -79,24 +75,11 @@ samba-tool domain join mydomain.com DC -U "mydomain\Administrator" --dns-backend
 #Add the tkey and minimal responses statements to the /etc/bind/named.conf.options file 
 sed -i 's/directory \"\/var\/cache\/bind\";/directory \"\/var\/cache\/bind\";\n        tkey-gssapi-keytab \"\/var\/lib\/samba\/private\/dns\.keytab\";\n        minimal\-responses yes;/g' /etc/bind/named.conf.options
 
-or 
-
-Modify Named.conf.options file and add the following lines under "directory "/var/cache/bind";
-
-     tkey-gssapi-keytab "/var/lib/samba/private/dns.keytab";
-     minimal-responses yes;
-```
-
-### Change file permissions and ownership for the dns.keytab
-``` bash
+# Change file permissions and ownership for the dns.keytab
 chmod 640 /var/lib/samba/private/dns.keytab
 chown root:bind /var/lib/samba/private/dns.keytab
-```
 
-### Enable the Bind-DLZ Modules and modify the /etc/bind/named.conf file
-
-``` bash 
-#Enable Bind-DLZ Module
+# Enable the Bind-DLZ Modules and modify the /etc/bind/named.conf file
 sed -i 's/# database.*11.*;/database \"dlopen \/usr\/lib\/x86_64-linux-gnu\/samba\/bind9\/dlz_bind9_11.so\";/g' /var/lib/samba/bind-dns/named.conf
 
 #Include the Bind-DLZ module in the main named.conf config file
@@ -110,10 +93,8 @@ chmod 755 /var/lib/samba/bind-dns
 
 #Restart the Bind9 Service
 systemctl restart bind9
-```
 
-### Enable the SAMBA-AD-DC Service
-``` bash
+# Enable the SAMBA-AD-DC Service
 systemctl stop smbd nmbd winbind
 systemctl disable smbd nmbd winbind
 systemctl mask smbd nmbd winbind
@@ -183,20 +164,23 @@ EOF
 #Change permissions on sssd.conf
 chown root:root /etc/sssd/sssd.conf
 chmod 600 /etc/sssd/sssd.conf
+```
 
-#Create /etc/krb5.keytab
+## Modify SMB.Conf and create KRB5.Keytab
+``` bash
 sed -i 's/workgroup \= MYDOMAIN/workgroup \= MYDOMAIN\n        kerberos method = secrets and keytab/g' /etc/samba/smb.conf
 kinit administrator
 net ads keytab create
 klist -k -K -t /etc/krb5.keytab
-
-#Restart SSSD to make sure the krb5 service takes the new settings.
-/usr/bin/systemctl restart sssd
 ```
-### Add linux groups to /etc/sudoers to enable access to the DC for Management Purposes
+
+## Restart SSSD and add Sudoers
+``` bash
+/usr/bin/systemctl restart sssd
+
+# Add linux groups to /etc/sudoers to enable access to the DC for Management Purposes
 Now that the DC is installed and authentication is configured to use the Active Directory, we will add the following groups to the sudoers file so that any members of these Active Directory Groups will be able to manage the newly installed Samba DC. 
 
-``` bash
 #Add Active Directory Group to sudoers file
 echo '%linuxsudoers           ALL=(ALL)       ALL' >> /etc/sudoers
 
