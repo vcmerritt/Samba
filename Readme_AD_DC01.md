@@ -1,7 +1,9 @@
 # Configure the first Samba Active Directory (AD) DC 
 
 ### Change the hostname of the VM before installing Samba
+
 >! Test
+
 ``` bash
 sed -i 's/BaseVMBuild/SAMBADC01/g' /etc/hosts
 sed -i 's/BaseVMBuild/SAMBADC01/g' /etc/hostname
