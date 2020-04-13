@@ -224,8 +224,8 @@ iptables-save > /etc/iptables/rules.v4
 
 ## Restart DNS on DC01, then trigger DNS Updates
 ``` bash 
-#Logon to DC01 with putty and execute the following:
-systemctl restart bind9
+#Restart the DNS Services on DC01
+ssh -l administrator -t SAMBADC01 "sudo systemctl restart bind9"
 
 #Log on to DC02 with putty and execute the following
 /usr/sbin/samba_dnsupdate
