@@ -169,14 +169,18 @@ EOF
 chown root:root /etc/sssd/sssd.conf
 chmod 600 /etc/sssd/sssd.conf
 
-#Create /etc/krb5.keytab
-#Change the occurrences of MYDOMAIN to match the domain you are creating for your company (match the case)
+#Change the smb.conf to ad the kerberos method (Replace MYDOMAIN with your domain name in all caps in the command below)
 sed -i 's/workgroup \= MYDOMAIN/workgroup \= MYDOMAIN\n        kerberos method = secrets and keytab/g' /etc/samba/smb.conf
+```
+
+## Create /etc/krb5.keytab file
+``` bash
 kinit administrator
 net ads keytab create
 klist -k -K -t /etc/krb5.keytab
-
-#Restart SSSD to make sure the krb5 service takes the new settings.
+```
+## Restart SSSD to make sure the krb5 service takes the new settings.
+``` bash
 /usr/bin/systemctl restart sssd
 
 # Add linux groups to /etc/sudoers to enable access to the DC for Management Purposes
