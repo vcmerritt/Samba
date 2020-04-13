@@ -237,11 +237,16 @@ iptables -A INPUT -p tcp -j DROP
 iptables-save > /etc/iptables/rules.v4
 ```
 
-## Reboot DC and Test 
+## Restart DNS on DC01, then trigger DNS Updates
 ``` bash 
+#Logon to DC01 with putty and execute the following:
+systemctl restart bind9
+
+#Log on to DC02 with putty and execute the following
+/usr/sbin/samba_dnsupdate
+
+#Reboot DC02
 /usr/sbin/reboot
 
-#Once the Reboot is complete, use a Windows 10 Pro Test Workstation with the RSAT tools installed
-#to check DNS, and Active Directory Users and Computers and validate the installation.
 ```
 
