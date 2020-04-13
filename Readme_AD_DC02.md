@@ -8,13 +8,9 @@ sed -i 's/BaseVMBuild/SambaDC02/g' /etc/hostname
 # If you are using a domain other than MYDOMAIN.COM execute the following (replace newdomain with your domain name):
 sed -i 's/mydomain\.com/newdomain\.com/g' /etc/hosts
 
-Hint:  If you run the sed command without the -i it will test the change and show you the results.
-
-### Change the Network to use a static IP Address (DC01)
+### Change the Network to use a static IP Address
 #Make sure you change the IP, mask and gateway to the correct IP before executing this command
 sed -i 's/dhcp/static\n   address 192\.168\.2\.41\n   netmask 255\.255\.255\.0\n   gateway 192\.168\.2\.1\n   dns-nameservers 192\.168\.2\.40\n   dns-domain mydomain\.com\n   dns-search mydomain\.com/g' /etc/network/interfaces
-
-# Change DNS Resolution to point to DC01 for DNS
 
 #Modify resolv.conf to point to local system:
 Change /etc/resolv.conf
