@@ -283,14 +283,12 @@ EOF
 ```
 
 ## Process LDIF to create Organizational Units in AD as depicted in the Stick Art Below
-
+``` bash
                        |- Users
 mydomain.com --> MYHQ -|- Computers
                        |- Groups
-                       |- Admins
-                       
-                       
-``` bash
+                       |- Admins               
+
 #Create OU's by processing the contents of base.ldif
 ldapmodify -H ldaps://sambadc01.testdomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ./base.ldif
 
