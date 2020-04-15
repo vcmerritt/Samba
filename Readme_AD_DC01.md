@@ -291,7 +291,7 @@ mydomain.com --> MYHQ -|- Computers
                        |- Admins               
 
 #Create OU's by processing the contents of base.ldif
-ldapmodify -H ldaps://sambadc01.mydomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ./base.ldif
+ldapmodify -H ldaps://sambadc01.mydomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ~/base.ldif
 
 ```
 
@@ -332,7 +332,7 @@ EOF
 
 
 #Process the renameAdmin.ldif to rename the builtin Administrator account to AD_Admin and create a Honeypot account called Administrator
-ldapmodify -H ldaps://sambadc01.mydomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ./base.ldif
+ldapmodify -H ldaps://sambadc01.mydomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ~/renameAdmin.ldif
 
 ```
 
