@@ -20,10 +20,7 @@ sed -i 's/dhcp/static\n   address 192\.168\.2\.40\n   netmask 255\.255\.255\.0\n
 ### Install Samba Services and enter initial values
 ``` bash
 apt install samba smbclient krb5-user winbind bind9 dnsutils -y   
-- Accept the default of NO for getting data from DHCP. 
-- Enter the DOMAIN NAME in all Caps when prompted (ie. MYDOMAIN.COM)
-- Enter the DC Name for the system you are installing (ie.  sambadc01.mydomain.com)
-- Enter the DC Name for the first DC Installed (ie.  sambadc01.mydomain.com) as the administrative server
+#Note:  Accept the default of No, and then press escape past any other prompts that appear.
 ```
 <br>
 
