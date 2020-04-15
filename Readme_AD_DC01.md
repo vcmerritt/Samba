@@ -283,6 +283,12 @@ name: Admins
 EOF
 ```
 
+## Add Domain Certificate from DC01 to trusted certificates store
+cd ~/
+cp /var/lib/samba/private/tls/ca.pem ./DC1CA.crt
+sudo cp *.crt /usr/local/share/ca-certificates
+sudo /usr/sbin/update-ca-certificates
+
 ## Process LDIF to create Organizational Units in AD as depicted in the Stick Art Below
 ``` bash
                        |- Users
