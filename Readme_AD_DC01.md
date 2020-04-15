@@ -291,7 +291,60 @@ mydomain.com --> MYHQ -|- Computers
                        |- Admins               
 
 #Create OU's by processing the contents of base.ldif
-ldapmodify -H ldaps://sambadc01.testdomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ./base.ldif
+ldapmodify -H ldaps://sambadc01.mydomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ./base.ldif
+
+```
+
+## Create LDIF to Rename Default Administrator Account for Security Best Practices
+
+``` bash
+cat <<EOF > ~/renameAdmin.ldif
+### rename.ldif example with all attributes that a normal user may need to change with a rename of the user account.
+dn: cn=Administrator,cn=Users,dc=mydomain,dc=com
+changetype: rename
+newrdn: cn=AD_Admin
+deleteoldrdn: 1
+
+dn: cn=AD_Admin,cn=Users,dc=mydomain,dc=com
+changetype: modify
+replace: sAMAccountName
+sAMAccountName: AD_Admin
+
+#Create unprivileged Administrator Account to replace the account that was renamed
+dn: cn=Administrator,cn=Users,dc=mydomain,dc=com
+changetype: add
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+description: Honeypot account to aid in the detection of intruders
+sAMAccountName: Administrator
+name: Administrator
+cn: Administrator
+PwdLastSet: -1
+
+#Set the user account to enabled
+dn: cn=Administrator,cn=Users,dc=mydomain,dc=com
+changetype: modify
+replace: userAccountControl
+userAccountControl: 512
+EOF
+
+
+#Process the renameAdmin.ldif to rename the builtin Administrator account to AD_Admin and create a Honeypot account called Administrator
+ldapmodify -H ldaps://sambadc01.mydomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ./base.ldif
+
+```
+
+## Set passwords on administrative accounts
+``` bash 
+
+#Replace "ANewP@ssw0rd" in the command below with a unique and very difficult password for the honeypot administrator account
+rpcclient -U AD_Admin //sambadc01 -c "setuserinfo2 Administrator 23 'ANewP@ssw0rd'"
+
+#Replace "ANewP@ssw0rd" in the command below with a unique and very difficult password for the honeypot administrator account
+rpcclient -U AD_Admin //sambadc01 -c "setuserinfo2 AD_Admin 23 'ANewP@ssw0rd'"
+
 
 ```
 
