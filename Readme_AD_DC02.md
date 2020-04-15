@@ -239,6 +239,7 @@ ssh -l AD_Admin -t SAMBADC01 "sudo systemctl restart bind9"
 ``` bash
 cd ~/
 cp /var/lib/samba/private/tls/ca.pem ./DC2CA.crt
+scp AD_Admin@192.168.2.40:/var/lib/samba/private/tls/ca.pem ./DC1CA.crt
 sudo cp *.crt /usr/local/share/ca-certificates
 sudo /usr/sbin/update-ca-certificates
 ```
