@@ -228,6 +228,7 @@ iptables-save > /etc/iptables/rules.v4
 ```
 # Create Organizational Units for Users, Computers and Groups
 
+## Generate base.ldif file that will be used to create OU's
 ``` bash
 cd ~/
 
