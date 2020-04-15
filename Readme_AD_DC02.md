@@ -235,3 +235,10 @@ ssh -l AD_Admin -t SAMBADC01 "sudo systemctl restart bind9"
 
 ```
 
+## Add Domain Certificate from DC01 to the System's trusted certificates store
+``` bash
+cd ~/
+cp /var/lib/samba/private/tls/ca.pem ./DC2CA.crt
+sudo cp *.crt /usr/local/share/ca-certificates
+sudo /usr/sbin/update-ca-certificates
+```
