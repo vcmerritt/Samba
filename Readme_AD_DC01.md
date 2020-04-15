@@ -336,7 +336,7 @@ ldapmodify -H ldaps://sambadc01.mydomain.com -D cn=Administrator,cn=Users,DC=myd
 
 ```
 
-## Set passwords on administrative accounts
+## Set passwords on real, and honeypot administrative accounts
 ``` bash 
 
 #Replace "ANewP@ssw0rd" in the command below with a unique and very difficult password for the honeypot administrator account
