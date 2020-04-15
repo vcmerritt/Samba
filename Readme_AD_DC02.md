@@ -65,7 +65,7 @@ EOF
 
 ### Generate Active Directory (AD) Domain with BIND9_DLZ backend
 ``` bash
-samba-tool domain join mydomain.com DC -U "mydomain\Administrator" --dns-backend=BIND9_DLZ
+samba-tool domain join mydomain.com DC -U "mydomain\AD_Admin" --dns-backend=BIND9_DLZ
 ```
 
 ### Modify named.conf for Bind to use the correct dns.keytab for the domain
@@ -106,7 +106,7 @@ systemctl restart samba-ad-dc
 ### Add a DNS Reverse Lookup Zone Entry and Test DNS
 ``` bash
 #Create a reverse DNS Zone
-kinit administrator
+kinit AD_Admin
 samba-tool dns add SambaDC01 2.168.192.in-addr.arpa 41.2.168.192.in-addr.arpa PTR sambadc02.mydomain.com
 
 #Test DNS Resolution
@@ -170,7 +170,7 @@ sed -i 's/workgroup \= MYDOMAIN/workgroup \= MYDOMAIN\n        kerberos method =
 
 ## Create KRB5.Keytab
 ``` bash
-kinit administrator
+kinit AD_Admin
 net ads keytab create
 klist -k -K -t /etc/krb5.keytab
 ```
@@ -225,7 +225,7 @@ iptables-save > /etc/iptables/rules.v4
 ## Restart DNS on DC01, then trigger DNS Updates
 ``` bash 
 #Restart the DNS Services on DC01
-ssh -l administrator -t SAMBADC01 "sudo systemctl restart bind9"
+ssh -l AD_Admin -t SAMBADC01 "sudo systemctl restart bind9"
 
 #Log on to DC02 with putty and execute the following
 /usr/sbin/samba_dnsupdate
