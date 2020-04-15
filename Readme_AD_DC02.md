@@ -230,8 +230,6 @@ ssh -l AD_Admin -t SAMBADC01 "sudo systemctl restart bind9"
 #Log on to DC02 with putty and execute the following
 /usr/sbin/samba_dnsupdate
 
-#Reboot DC02
-/usr/sbin/reboot
 
 ```
 
@@ -242,4 +240,7 @@ cp /var/lib/samba/private/tls/ca.pem ./DC2CA.crt
 scp AD_Admin@192.168.2.40:/var/lib/samba/private/tls/ca.pem ./DC1CA.crt
 sudo cp *.crt /usr/local/share/ca-certificates
 sudo /usr/sbin/update-ca-certificates
+
+#Reboot DC02
+/usr/sbin/reboot
 ```
