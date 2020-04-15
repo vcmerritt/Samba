@@ -226,4 +226,64 @@ iptables -A INPUT -p tcp --dport 49152:65535 -j ACCEPT
 iptables -A INPUT -p tcp -j DROP
 iptables-save > /etc/iptables/rules.v4
 ```
+# Create Organizational Units for Users, Computers and Groups
+
+``` bash
+cd ~/
+
+#Generate the ldif file to create Active Directory OU's
+cat <<EOF > ~/base.ldif
+#### base.ldif contents ####
+## Create OU's
+
+#Create Top-level Company Specific OU (replace all occurences of MYHQ with custom company OU ID like "CompanyA")
+dn: ou=MYHQ,dc=mydomain,dc=com
+changetype: add
+objectClass: top
+objectClass: organizationalUnit
+ou: MYHQ
+name: MYHQ
+
+#Create Computers OU
+dn: ou=Computers,ou=MYHQ,dc=mydomain,dc=com
+changetype: add
+objectClass: top
+objectClass: organizationalUnit
+ou: Computers
+name: Computers
+
+#Create the Users OU
+dn: ou=Users,ou=MYHQ,dc=mydomain,dc=com
+changetype: add
+objectClass: top
+objectClass: organizationalUnit
+ou: Users
+name: Users
+
+#Create a Groups OU
+dn: ou=Groups,ou=MYHQ,dc=mydomain,dc=com
+changetype: add
+objectClass: top
+objectClass: organizationalUnit
+ou: Groups
+name: Groups
+
+#Create an Admins OU
+dn: ou=Admins,ou=MYHQ,dc=mydomain,dc=com
+changetype: add
+objectClass: top
+objectClass: organizationalUnit
+description: "Group to assign admin privileges to items in NextCloud"
+ou: Admins
+name: Admins
+
+##
+#### END base.ldif conents ####
+EOF
+
+
+#Create OU's by processing the contents of base.ldif
+ldapmodify -H ldaps://sambadc01.testdomain.com -D cn=Administrator,cn=Users,DC=mydomain,dc=com -W -x -f ./base.ldif
+
+```
 
